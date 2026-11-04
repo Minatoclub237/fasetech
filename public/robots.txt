@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fasetech.be/sitemap.xml
+Sitemap: https://fasetech.vercel.app/sitemap.xml

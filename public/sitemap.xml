@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://fasetech.be/</loc></url>
-  <url><loc>https://fasetech.be/mentions-legales.html</loc></url>
-  <url><loc>https://fasetech.be/confidentialite.html</loc></url>
+  <url><loc>https://fasetech.vercel.app/</loc></url>
+  <url><loc>https://fasetech.vercel.app/mentions-legales.html</loc></url>
+  <url><loc>https://fasetech.vercel.app/confidentialite.html</loc></url>
 </urlset>

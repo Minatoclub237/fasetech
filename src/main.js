@@ -63,7 +63,6 @@ heroVideo.src = mobile ? '/video/hero-m.mp4' : '/video/hero.mp4'
 // Videos only run while on screen
 const videoWatch = new IntersectionObserver((entries) => entries.forEach((e) => (e.isIntersecting ? e.target.play().catch(() => {}) : e.target.pause())))
 videoWatch.observe(heroVideo)
-videoWatch.observe($('.foot-img video'))
 
 pin('.hero', 70, gsap.timeline({ defaults: { ease: 'none' } })
   .to('.hero-media', { scale: 1.08, '--shade': 0, duration: 1 }, 0)
@@ -157,11 +156,10 @@ ctaTl.fromTo('.cta-in .body, .cta-in .cta', { y: () => U() * 50, opacity: 0 }, {
 const finalIn = entry('.final', 'top 92%', 'top top')
 tighten(finalIn, '.final-p')
 finalIn.fromTo('.foot-nav a', { y: () => U() * 40, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.06, duration: 0.5 }, 0.35)
-  .fromTo('.foot-img', { y: () => U() * 240 }, { y: 0, duration: 1, ease: 'power2.out' }, 0)
 const finalPin = pin('.final', 170, gsap.timeline({ defaults: { ease: 'none' } })
   .fromTo('.mq1', { backgroundPosition: '100% 0' }, { backgroundPosition: '0% 0', duration: 0.4 }, 0)
   .fromTo('.mq2', { backgroundPosition: '100% 0' }, { backgroundPosition: '0% 0', duration: 0.4 }, 0.5)
-  .fromTo('.foot-img video', { yPercent: 0 }, { yPercent: -20, duration: 1 }, 0))
+  .to({}, { duration: 0.1 }, 0.9))
 gsap.fromTo('.mq', { x: 0 }, {
   x: () => -($('.mq').offsetWidth - innerWidth + U() * 54), ease: 'none',
   scrollTrigger: { trigger: '.final', start: 'top 60%', end: () => finalPin.end, scrub: true, invalidateOnRefresh: true },
