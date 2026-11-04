@@ -1,6 +1,7 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
+import { en } from './en.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -184,8 +185,20 @@ const mail = (subject) => `mailto:afarhane00@gmail.com?subject=${encodeURICompon
 const BCE = 'https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html?lang=fr&nummer=0804170184&actionLu=Recherche'
 const VAT = 'https://fin.belgium.be/fr/particuliers/habitation/construire-renover/renover/renover-taux-de-tva'
 
+// English page: same code, other words
+const EN = document.documentElement.lang === 'en' ? en({ TEL, mail, VAT }) : null
+const UI = EN?.ui || {
+  opening: 'Votre application e-mail va s’ouvrir pour envoyer la demande.',
+  subject: 'Demande via le site Fasetech',
+  sending: 'Envoi en cours…',
+  sent: 'Merci, votre demande a bien été envoyée.',
+  failed: 'L’envoi a échoué. Appelez le <a href="tel:+32494990657">0494 99 06 57</a>.',
+  menuOpen: 'Ouvrir le menu',
+  menuClose: 'Fermer le menu',
+}
+
 // ---- Service sheets: the card flies open in 3D, the photo keeps moving behind the text
-const SERVICES = [
+const SERVICES = EN?.services || [
   { img: '/img/foot.webp', code: 'Activité déclarée · NACE 43.211', title: 'Installation électrique', text: 'Le cœur du métier de Fasetech : les travaux généraux d’installation électrotechnique, avec une compétence professionnelle enregistrée depuis juillet 2023.', list: ['Nouvelle installation ou extension', 'Tableau électrique à poser ou à remplacer', 'Circuits, prises et éclairage'], cta: 'Décrire mon projet', href: '#demande' },
   { img: '/img/cta.webp', code: 'Activité déclarée · NACE 33.140', title: 'Réparation et entretien', text: 'Un circuit qui lâche, un disjoncteur qui saute, un équipement à remettre en état : on cherche la cause avant de changer quoi que ce soit.', list: ['Recherche de la cause de la panne', 'Réparation d’équipements électriques', 'Entretien d’équipements électriques'], cta: 'Appeler pour une panne', href: TEL },
   { img: '/img/s2.webp', code: 'Activité déclarée · NACE 43.212', title: 'Industrie', text: 'L’installation électrotechnique d’établissements industriels est une activité déclarée à part entière, tout comme la réparation et l’entretien de leurs équipements.', list: ['Installation d’établissements industriels', 'Distribution et chemins de câbles', 'Réparation et entretien d’équipements'], cta: 'Présenter mon site', href: mail('Installation électrique pour mon site industriel') },
@@ -278,7 +291,7 @@ sheetPanel.addEventListener('pointermove', (e) => {
 sheetBody.addEventListener('scroll', () => imgY(Math.max(sheetBody.scrollTop * -0.04, -6)), { passive: true })
 
 // ---- FAQ: real objections, each with its own next step
-const FAQ = {
+const FAQ = EN?.faq || {
   confiance: [
     { q: 'Je ne trouve pas d’avis sur Fasetech. Pourquoi vous faire confiance ?', a: 'Parce que l’essentiel se vérifie sans nous croire sur parole : numéro d’entreprise, situation et compétences professionnelles sont publics à la Banque-Carrefour des Entreprises. Fasetech débute sur le web, pas sur les chantiers : l’entreprise est active depuis 2023.', cta: 'Voir la fiche officielle', href: BCE },
     { q: 'Est-il vraiment qualifié pour toucher à mon installation ?', a: 'La compétence professionnelle en activités électrotechniques est enregistrée depuis le 20 juillet 2023, celle d’entrepreneur général depuis le 22 septembre 2023. Ce sont des dates officielles, pas un argument de vente.', cta: 'Voir les preuves', href: '#verifier' },
@@ -389,20 +402,20 @@ form.addEventListener('submit', async (e) => {
   const endpoint = import.meta.env.VITE_FORM_ENDPOINT
   if (!endpoint) {
     const body = `${d.get('demande')}\n\n${d.get('nom')}\n${d.get('telephone')}\n${d.get('email')}\n${d.get('commune')}`
-    formMsg.textContent = 'Votre application e-mail va s’ouvrir pour envoyer la demande.'
-    location.href = `mailto:afarhane00@gmail.com?subject=${encodeURIComponent('Demande via le site Fasetech')}&body=${encodeURIComponent(body)}`
+    formMsg.textContent = UI.opening
+    location.href = `${mail(UI.subject)}&body=${encodeURIComponent(body)}`
     return
   }
   const button = form.querySelector('button')
   button.disabled = true
-  formMsg.textContent = 'Envoi en cours…'
+  formMsg.textContent = UI.sending
   try {
     const res = await fetch(endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: d })
     if (!res.ok) throw new Error(res.status)
     form.reset()
-    formMsg.textContent = 'Merci, votre demande a bien été envoyée.'
+    formMsg.textContent = UI.sent
   } catch {
-    formMsg.innerHTML = 'L’envoi a échoué. Appelez le <a href="tel:+32494990657">0494 99 06 57</a>.'
+    formMsg.innerHTML = UI.failed
   }
   button.disabled = false
 })
@@ -412,7 +425,7 @@ const burger = $('.burger')
 const setMenu = (open) => {
   document.body.classList.toggle('menu-open', open)
   burger.setAttribute('aria-expanded', open)
-  burger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu')
+  burger.setAttribute('aria-label', open ? UI.menuClose : UI.menuOpen)
 }
 burger.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')))
 $('#menu').addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false) })
